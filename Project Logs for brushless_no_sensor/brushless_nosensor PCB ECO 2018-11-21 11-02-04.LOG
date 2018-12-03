@@ -1,0 +1,36 @@
+Removed Pin From Net: NetName=PGND Pin=C3-1
+Removed Pin From Net: NetName=5V Pin=C3-2
+Removed Pin From Net: NetName=PGND Pin=C4-1
+Removed Pin From Net: NetName=5V Pin=C4-2
+Removed Pin From Net: NetName=PGND Pin=C6-1
+Removed Pin From Net: NetName=VIN Pin=C6-2
+Removed Pin From Net: NetName=PGND Pin=D1-1
+Removed Pin From Net: NetName=5V Pin=L1-2
+Removed Pin From Net: NetName=PGND Pin=MP1-2
+Removed Pin From Net: NetName=VIN Pin=MP1-5
+Removed Pin From Net: NetName=VIN Pin=R1-1
+Removed Pin From Net: NetName=PGND Pin=R2-2
+Removed Pin From Net: NetName=PGND Pin=R3-2
+Removed Pin From Net: NetName=5V Pin=R4-2
+Removed Member From Class: ClassName=Sheet1 Member=C3
+Removed Member From Class: ClassName=Sheet1 Member=C4
+Removed Member From Class: ClassName=Sheet1 Member=C6
+Removed Member From Class: ClassName=Sheet1 Member=D1
+Removed Member From Class: ClassName=Sheet1 Member=L1
+Removed Member From Class: ClassName=Sheet1 Member=MP1
+Removed Member From Class: ClassName=Sheet1 Member=R1
+Removed Member From Class: ClassName=Sheet1 Member=R2
+Removed Member From Class: ClassName=Sheet1 Member=R3
+Removed Member From Class: ClassName=Sheet1 Member=R4
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Value"; Value = "0.1uF"; VariantName = "[No Variations]"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Value"; Value = "0.1uF"; VariantName = "[No Variations]"
+Added Component: Designator=*(TO-252AA)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=VIN Pin=*-1
+Added Pin To Net: NetName=5V Pin=*-3
+Added Pin To Net: NetName=VIN Pin=C1-1
+Added Pin To Net: NetName=PGND Pin=C1-2
+Added Pin To Net: NetName=PGND Pin=C2-2
+Added Member To Class: ClassName=Sheet1 Member=Component * 7805

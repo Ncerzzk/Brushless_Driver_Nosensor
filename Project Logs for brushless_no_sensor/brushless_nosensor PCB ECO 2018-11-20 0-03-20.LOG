@@ -1,0 +1,11 @@
+Added Component: Designator=P4(1.25mm_1X6_SMT)
+Add component. Clean all parameters for all variants
+Added Pin To Net: NetName=GND Pin=P4-1
+Added Pin To Net: NetName=MOSI Pin=P4-4
+Added Pin To Net: NetName=MISO Pin=P4-5
+Added Pin To Net: NetName=5V Pin=P4-6
+Added Pin To Net: NetName=CLK Pin=P4-3
+Added Net: Name=CLK
+Added Pin To Net: NetName=CSN Pin=P4-2
+Added Net: Name=CSN
+Added Member To Class: ClassName=Sheet1 Member=Component P4 HDR1x6_2.54

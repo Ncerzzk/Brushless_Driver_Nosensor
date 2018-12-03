@@ -1,0 +1,4 @@
+Removed Pin From Net: NetName=INA Pin=STM1-11
+Removed Pin From Net: NetName=INC Pin=STM1-15
+Added Pin To Net: NetName=INC Pin=STM1-11
+Added Pin To Net: NetName=INA Pin=STM1-15

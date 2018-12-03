@@ -1,0 +1,20 @@
+Removed Pin From Net: NetName=GND Pin=C5-2
+Removed Pin From Net: NetName=PGND Pin=R8-2
+Removed Pin From Net: NetName=PGND Pin=R10-2
+Removed Pin From Net: NetName=GND Pin=TJA1-2
+Added Component: Designator=C17(C_ELE2)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "LatestRevisionDate"; Value = "17-Jul-2002"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "LatestRevisionNote"; Value = "Re-released for DXP Platform."; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageDescription"; Value = "Polarized Capacitor (Radial); 2 Leads"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "PackageReference"; Value = "RB7.6-15"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Published"; Value = "8-Jun-2000"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Publisher"; Value = "Altium Limited"; VariantName = "[No Variations]"
+Add component (AddParameter): Name = "Value"; Value = "*¦ÌF"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=PGND Pin=C5-2
+Added Pin To Net: NetName=VIN Pin=C17-1
+Added Pin To Net: NetName=PGND Pin=C17-2
+Added Pin To Net: NetName=GND Pin=R8-2
+Added Pin To Net: NetName=GND Pin=R10-2
+Added Pin To Net: NetName=PGND Pin=TJA1-2
+Added Member To Class: ClassName=Sheet1 Member=Component C17 *¦ÌF

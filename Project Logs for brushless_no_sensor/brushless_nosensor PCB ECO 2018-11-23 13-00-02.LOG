@@ -1,0 +1,11 @@
+Added Component: Designator=P5(HDR1X2_2.54_180)
+Add component. Clean all parameters for all variants
+Added Component: Designator=R27(RES_0603)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "120R"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=CAN_H Pin=P5-1
+Added Pin To Net: NetName=CAN_L Pin=P5-2
+Added Pin To Net: NetName=CAN_L Pin=R27-1
+Added Pin To Net: NetName=CAN_H Pin=R27-2
+Added Member To Class: ClassName=Sheet1 Member=Component P5 HDR1x2_2.54
+Added Member To Class: ClassName=Sheet1 Member=Component R27 Res_0603

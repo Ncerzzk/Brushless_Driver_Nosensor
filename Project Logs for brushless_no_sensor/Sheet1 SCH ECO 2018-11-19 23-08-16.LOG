@@ -1,0 +1,4 @@
+Remove Pin=STM1B-16 From Net=CH1
+Change Pin Designator/Name:  Old Designator=STM1B-3 Old Name=PC14 New Designator =PA6 New Name=16
+Change Pin Designator/Name:  Old Designator=STM1B-4 Old Name=PC15 New Designator =PA3 New Name=13
+Change Pin Designator/Name:  Old Designator=STM1B-13 Old Name=PA3 New Designator =PC14 New Name=3

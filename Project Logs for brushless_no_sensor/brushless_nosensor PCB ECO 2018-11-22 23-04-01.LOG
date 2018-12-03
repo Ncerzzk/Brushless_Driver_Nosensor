@@ -1,0 +1,38 @@
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Value"; Value = "0.1u"; VariantName = "[No Variations]"
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Value"; Value = "33pF"; VariantName = "[No Variations]"
+Added Component: Designator=C18(CAP_0603)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "0.1u"; VariantName = "[No Variations]"
+Added Component: Designator=C19(CAP_0603)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "0.1u"; VariantName = "[No Variations]"
+Added Component: Designator=C20(CAP_0603)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "0.1u"; VariantName = "[No Variations]"
+Added Component: Designator=C21(CAP_0603)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "0.1u"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=GND Pin=C18-1
+Added Pin To Net: NetName=3V3 Pin=C18-2
+Added Pin To Net: NetName=GND Pin=C19-1
+Added Pin To Net: NetName=3V3 Pin=C19-2
+Added Pin To Net: NetName=GND Pin=C20-1
+Added Pin To Net: NetName=3V3 Pin=C20-2
+Added Pin To Net: NetName=GND Pin=C21-1
+Added Pin To Net: NetName=3V3 Pin=C21-2
+Added Member To Class: ClassName=Sheet1 Member=Component C3 Cap_0805
+Added Member To Class: ClassName=Sheet1 Member=Component C4 Cap_0603
+Added Member To Class: ClassName=Sheet1 Member=Component C6 Cap_0805
+Added Member To Class: ClassName=Sheet1 Member=Component C18 Cap_0603
+Added Member To Class: ClassName=Sheet1 Member=Component C19 Cap_0603
+Added Member To Class: ClassName=Sheet1 Member=Component C20 Cap_0603
+Added Member To Class: ClassName=Sheet1 Member=Component C21 Cap_0603
+Added Member To Class: ClassName=Sheet1 Member=Component D1 Diode
+Added Member To Class: ClassName=Sheet1 Member=Component L1 Ind_CD32
+Added Member To Class: ClassName=Sheet1 Member=Component MP1 MP2451
+Added Member To Class: ClassName=Sheet1 Member=Component R1 Res_0603
+Added Member To Class: ClassName=Sheet1 Member=Component R2 Res_0603
+Added Member To Class: ClassName=Sheet1 Member=Component R3 Res_0603
+Added Member To Class: ClassName=Sheet1 Member=Component R4 Res_0603

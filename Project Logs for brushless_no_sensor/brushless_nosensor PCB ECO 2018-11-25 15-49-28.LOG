@@ -1,0 +1,7 @@
+Removed Pin From Net: NetName=5V Pin=C5-1
+Removed Pin From Net: NetName=PGND Pin=C5-2
+Removed Pin From Net: NetName=PWM_IN Pin=P3-1
+Removed Pin From Net: NetName=5V Pin=P3-2
+Removed Pin From Net: NetName=PGND Pin=P3-3
+Removed Member From Class: ClassName=Sheet1 Member=C5
+Removed Member From Class: ClassName=Sheet1 Member=P3

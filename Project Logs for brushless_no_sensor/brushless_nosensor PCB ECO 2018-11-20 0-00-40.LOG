@@ -1,0 +1,3 @@
+Change Component Footprint: Designator=C6 Old Footprint=CAP-MLCC-1206 New Footprint=CAP_0805
+Change component parameters. Clean all parameters for all variants
+Change component parameters (AddParameter): Name = "Value"; Value = "10u"; VariantName = "[No Variations]"

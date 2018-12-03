@@ -1,0 +1,6 @@
+Removed Pin From Net: NetName=CH3_L Pin=STM1-2
+Removed Pin From Net: NetName=CH1_L Pin=STM1-3
+Removed Pin From Net: NetName=CH2_L Pin=STM1-4
+Added Pin To Net: NetName=CH3_L Pin=STM1-12
+Added Pin To Net: NetName=CH2_L Pin=STM1-13
+Added Pin To Net: NetName=CH1_L Pin=STM1-16

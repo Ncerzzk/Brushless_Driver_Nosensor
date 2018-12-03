@@ -1,0 +1,7 @@
+Added Component: Designator=R20(RES_0603)
+Add component. Clean all parameters for all variants
+Add component (AddParameter): Name = "Value"; Value = "10K"; VariantName = "[No Variations]"
+Added Pin To Net: NetName=PGND Pin=R20-1
+Added Pin To Net: NetName=INA Pin=R20-2
+Added Member To Class: ClassName=Sheet1 Member=Component R2 Res_0603
+Added Member To Class: ClassName=Sheet1 Member=Component R20 Res_0603
