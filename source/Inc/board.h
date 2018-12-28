@@ -17,9 +17,10 @@ typedef enum{
 // 以下定义为使用磁编码器时才会用到
 #define MOTOR_N         12
 #define MOTOR_P         14
-#define MOTOR_NP        84  // 最小公倍数，也就是一圈要换向多少次
-#define MAG_ENCODER_LINES       1024 //磁编码器线数
-#define MIN_ANGLE       24.4  // 最小换向角度
+#define MOTOR_NP        42  // 最小公倍数，也就是一圈要换向多少次
+#define MAG_ENCODER_LINES       16384 //磁编码器线数
+#define MIN_ANGLE       390  // 最小换向角度 (MAG_ENCODER_LINES/MOTOR_NP)
+#define HALF_MIN_ANGLE  MIN_ANGLE/2
 
 
 typedef enum{
@@ -38,6 +39,7 @@ extern char  Phase_String[3];
 typedef struct{
   Phase High;      //高端MOS
   Phase Low;       //低端MOS
+  int index;
 }Phase_State;
 
 typedef enum{
@@ -70,24 +72,21 @@ extern Phase_State CB;
 
 void Set_Phase_High_Speed(Phase phase,float speed);
 void Set_Phase_Low_State(Phase phase,IO_State state);
-void Phase_Change(Phase_State target,float speed);
+void Phase_Change(Phase_State * target,float speed);
 void Close_Phases();
-void Phase_Table_Init();
-uint16_t Read_Mag();
 
-//extern Phase_State * Phase_Table[7];
-extern Phase_State ** Phase_Table_Using;
-extern int Test_Table_Cnt;
-extern uint8_t Phase_Test_Table[6];
-extern Phase_State * const Phase_Const[6];
-extern Phase_State * const Phase_Const_Reverse[6];
-extern uint8_t Hall_Position;
-uint8_t Get_Hall_Position();
+
 void Set_To_Statble_Positon();
 void Set_Motor_Duty(float duty);
 extern float Motor_Duty;    
 
-extern int16_t Start_Position;
+extern uint16_t Start_Position;
 extern int Phase_Change_Cnt;
 extern int Phase_Open_Cnt;
+
+
+extern uint16_t Mag_Position;
+void Mag_Brushless_Mointor(uint16_t mag_position);
+void Rotate_Test();
+void Get_Start_Position();
 #endif

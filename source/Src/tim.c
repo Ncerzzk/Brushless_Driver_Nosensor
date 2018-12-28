@@ -43,7 +43,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-
+TIM_HandleTypeDef htim6;
 /* USER CODE END 0 */
 
 TIM_HandleTypeDef htim2;
@@ -128,7 +128,9 @@ void MX_TIM3_Init(void)
   }
 
   HAL_TIM_MspPostInit(&htim3);
-
+  HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_2);
+  HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_3);
+  HAL_TIM_PWM_Start(&htim3,TIM_CHANNEL_4);
 }
 /* TIM7 init function */
 void MX_TIM7_Init(void)
@@ -138,7 +140,7 @@ void MX_TIM7_Init(void)
   htim7.Instance = TIM7;
   htim7.Init.Prescaler = 47;
   htim7.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim7.Init.Period = 65535;
+  htim7.Init.Period = 500;
   htim7.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim7) != HAL_OK)
   {
@@ -151,7 +153,10 @@ void MX_TIM7_Init(void)
   {
     _Error_Handler(__FILE__, __LINE__);
   }
-
+  HAL_NVIC_SetPriority(TIM7_IRQn, 1, 0);
+  HAL_NVIC_EnableIRQ(TIM7_IRQn);
+    
+  HAL_TIM_Base_Start_IT(&htim7);
 }
 
 void HAL_TIM_IC_MspInit(TIM_HandleTypeDef* tim_icHandle)
@@ -304,7 +309,39 @@ void HAL_TIM_Base_MspDeInit(TIM_HandleTypeDef* tim_baseHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+void MX_TIM6_Init(void)
+{
+  TIM_MasterConfigTypeDef sMasterConfig;
 
+  htim6.Instance = TIM6;
+  htim6.Init.Prescaler = 71;
+  htim6.Init.CounterMode = TIM_COUNTERMODE_UP;
+  htim6.Init.Period = 65535;
+  if (HAL_TIM_Base_Init(&htim6) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+
+  sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
+  sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
+  if (HAL_TIMEx_MasterConfigSynchronization(&htim6, &sMasterConfig) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+  __HAL_RCC_TIM6_CLK_ENABLE();
+  HAL_TIM_Base_Stop(&htim6);
+
+}
+void Delay_Us(uint32_t nus){
+  
+  uint16_t cnt=0;
+  TIM6->CNT=0;
+  HAL_TIM_Base_Start(&htim6);
+  while(cnt<nus){
+    cnt=TIM6->CNT;
+  }
+  HAL_TIM_Base_Stop(&htim6);
+}
 /* USER CODE END 1 */
 
 /**

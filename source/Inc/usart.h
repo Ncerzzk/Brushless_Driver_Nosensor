@@ -71,6 +71,8 @@ extern uint8_t buffer_rx[30];
 extern int buffer_rx_count;
 
 extern uint8_t buffer_rx_OK;
+void send_wave(float arg1,float arg2,float arg3,float arg4);
+void send_wave_polling(float arg1,float arg2,float arg3,float arg4,float arg5);
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

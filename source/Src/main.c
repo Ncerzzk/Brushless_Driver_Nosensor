@@ -48,7 +48,11 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN Includes */
-
+#include "command.h"
+#include "board.h"
+#include "dma.h"
+#include "string.h"
+#include "as5047.h"
 /* USER CODE END Includes */
 
 /* Private variables ---------------------------------------------------------*/
@@ -67,7 +71,9 @@ void SystemClock_Config(void);
 /* USER CODE END PFP */
 
 /* USER CODE BEGIN 0 */
-
+extern uint8_t Rotate_Test_Flag;
+uint8_t time_2ms_flag;
+    uint8_t temp_flag;
 /* USER CODE END 0 */
 
 /**
@@ -78,52 +84,62 @@ void SystemClock_Config(void);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
-
+  
   /* MCU Configuration----------------------------------------------------------*/
-
+  
   /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-
+  
   /* USER CODE BEGIN Init */
-
+  
   /* USER CODE END Init */
-
+  
   /* Configure the system clock */
   SystemClock_Config();
-
+  
   /* USER CODE BEGIN SysInit */
-
+  
   /* USER CODE END SysInit */
-
+  
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  MX_DMA_Init();
   MX_ADC_Init();
   MX_CAN_Init();
-  MX_COMP1_Init();
+
   MX_SPI1_Init();
   MX_TIM2_Init();
   MX_TIM3_Init();
+  MX_TIM6_Init();
   MX_USART1_UART_Init();
   MX_TIM7_Init();
   /* USER CODE BEGIN 2 */
-    uprintf("hello,world!\r\n");
+  command_init();
+  uprintf("hello,world!\r\n");
   /* USER CODE END 2 */
-
+  
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+    
+    /* USER CODE END WHILE */
+    if(buffer_rx_OK){
+      analize(buffer_rx);
+      buffer_rx_OK=0;
+    }
 
-  /* USER CODE END WHILE */
-
-  /* USER CODE BEGIN 3 */
-
+    Mag_Position=Get_Position();
+    //send_wave(Mag_Position,Phase_Change_Cnt*1000,0,0);
+    Mag_Brushless_Mointor(Mag_Position);
+   
+    /* USER CODE BEGIN 3 */
+    
   }
   /* USER CODE END 3 */
-
 }
+
 
 /**
   * @brief System Clock Configuration
@@ -184,7 +200,27 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
+void HAL_SYSTICK_Callback(void){
 
+    
+  if(Board_Mode!=NORMAL)
+    return ;
+   Phase_Open_Cnt++;
+
+   if(Phase_Open_Cnt>30){
+      Close_Phases();
+      Phase_Open_Cnt=0;
+      uprintf("close phases!\r\n");
+   }
+
+}
+
+void HAL_TIM_PeriodElapsedCallback(TIM_HandleTypeDef *htim){
+  if(htim->Instance!=TIM7){
+    return ;
+  }
+
+}
 /* USER CODE END 4 */
 
 /**

@@ -1199,6 +1199,9 @@
                 <name>$PROJ_DIR$\..\Src\adc.c</name>
             </file>
             <file>
+                <name>$PROJ_DIR$\..\Src\as5047.c</name>
+            </file>
+            <file>
                 <name>$PROJ_DIR$\..\Src\base.c</name>
             </file>
             <file>
@@ -1215,6 +1218,9 @@
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Src\comp.c</name>
+            </file>
+            <file>
+                <name>$PROJ_DIR$\..\Src\dma.c</name>
             </file>
             <file>
                 <name>$PROJ_DIR$\..\Src\gpio.c</name>

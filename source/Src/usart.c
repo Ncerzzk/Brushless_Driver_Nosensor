@@ -44,6 +44,8 @@
 
 /* USER CODE BEGIN 0 */
 #include <stdarg.h>
+#include <stdlib.h>
+#include <string.h>
 uint8_t uart_buffer[100 + 1];
 
 uint8_t buffer_rx_temp;
@@ -55,7 +57,7 @@ uint8_t buffer_rx_OK;
 /* USER CODE END 0 */
 
 UART_HandleTypeDef huart1;
-
+DMA_HandleTypeDef hdma_usart1_tx;
 /* USART1 init function */
 
 void MX_USART1_UART_Init(void)
@@ -80,6 +82,7 @@ void MX_USART1_UART_Init(void)
   HAL_NVIC_EnableIRQ(USART1_IRQn);
   
   HAL_UART_Receive_IT(&huart1,&buffer_rx_temp,1);
+  
 }
 
 void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
@@ -108,7 +111,20 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
     /* USART1 interrupt Init */
 
   /* USER CODE BEGIN USART1_MspInit 1 */
+    hdma_usart1_tx.Instance = DMA1_Channel2;
+    hdma_usart1_tx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+    hdma_usart1_tx.Init.PeriphInc = DMA_PINC_DISABLE;
+    hdma_usart1_tx.Init.MemInc = DMA_MINC_ENABLE;
+    hdma_usart1_tx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+    hdma_usart1_tx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+    hdma_usart1_tx.Init.Mode = DMA_NORMAL;
+    hdma_usart1_tx.Init.Priority = DMA_PRIORITY_MEDIUM;
+    if (HAL_DMA_Init(&hdma_usart1_tx) != HAL_OK)
+    {
+      _Error_Handler(__FILE__, __LINE__);
+    }
 
+    __HAL_LINKDMA(uartHandle,hdmatx,hdma_usart1_tx);
   /* USER CODE END USART1_MspInit 1 */
   }
 }
@@ -149,7 +165,8 @@ void uprintf(char *fmt, ...)
   
   size=vsnprintf((char*)uart_buffer, 100 + 1, fmt, arg_ptr);
   va_end(arg_ptr);
-  HAL_UART_Transmit(&HUART_USE,uart_buffer, size,1000);
+  //HAL_UART_Transmit(&HUART_USE,uart_buffer, size,1000);
+  HAL_UART_Transmit_IT(&HUART_USE,uart_buffer,size);
 }
 
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
@@ -164,6 +181,32 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
       HAL_UART_Receive_IT(huart,&buffer_rx_temp,1);
     }
   }
+}
+
+char s[22]={'b','y',16,6};
+void send_wave(float arg1,float arg2,float arg3,float arg4){
+
+  s[20]='\r';
+  s[21]='\n';
+  memcpy(s+4,&arg1,sizeof(arg1));
+  memcpy(s+8,&arg2,sizeof(arg1));
+  memcpy(s+12,&arg3,sizeof(arg1));
+  memcpy(s+16,&arg4,sizeof(arg1));
+  HAL_UART_Transmit_DMA(&HUART_USE,(uint8_t *)s,sizeof(s));
+  //HAL_UART_Transmit_IT(&HUART_USE,(uint8_t *)s,sizeof(s));
+}
+char s2[26]={'b','y',20,6};
+void send_wave_polling(float arg1,float arg2,float arg3,float arg4,float arg5){
+
+  s2[24]='\r';
+  s2[25]='\n';
+  memcpy(s2+4,&arg1,sizeof(arg1));
+  memcpy(s2+8,&arg2,sizeof(arg1));
+  memcpy(s2+12,&arg3,sizeof(arg1));
+  memcpy(s2+16,&arg4,sizeof(arg1));
+  memcpy(s2+20,&arg5,sizeof(arg1));
+  //HAL_UART_Transmit_DMA(&HUART_USE,(uint8_t *)s,sizeof(s));
+  HAL_UART_Transmit(&HUART_USE,(uint8_t *)s2,sizeof(s2),100);
 }
 /* USER CODE END 1 */
 

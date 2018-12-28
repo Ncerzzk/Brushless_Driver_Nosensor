@@ -115,9 +115,8 @@ void set_mode(int arg_num,char **s,float * args){
   }else if(compare_string(s[0],"test")){
     Board_Mode=TEST;
   }else if(compare_string(s[0],"table")){
-    Set_To_Statble_Positon();
-    Board_Mode=TEST_TALBE;
-    uprintf("use your hand to rotate motor!\r\n");
+
+    // 这是霍尔无刷用的，直接删除了。
   }
   uprintf("ok set mode =%s\r\n",s[0]);
 }
@@ -161,19 +160,19 @@ void phase_change(int arg_num,char **s,float *args){
   low=s[1][0];
   if(high=='a'){
     if(low=='b')
-      Phase_Change(AB,50);
+      Phase_Change(&AB,50);
     if(low=='c')
-      Phase_Change(AC,50);
+      Phase_Change(&AC,50);
   }else if(high=='b'){
     if(low=='a')
-      Phase_Change(BA,50);
+      Phase_Change(&BA,50);
     if(low=='c')
-      Phase_Change(BC,50);
+      Phase_Change(&BC,50);
   }else if(high=='c'){
     if(low=='a')
-      Phase_Change(CA,50);
+      Phase_Change(&CA,50);
     if(low=='b')
-      Phase_Change(CB,50);
+      Phase_Change(&CB,50);
   }
   HAL_Delay((int)args[0]);
   
@@ -186,7 +185,7 @@ void read_mag(int arg_num,char **s,float *args){
     return ;
   }
   
-  uprintf("position=%d\r\n",Read_Mag());
+  
 }
 
 void set_motor_duty(int arg_num,char **s,float * args){
@@ -197,3 +196,19 @@ void set_motor_duty(int arg_num,char **s,float * args){
   Set_Motor_Duty(args[0]);
   uprintf("ok,set motor duty=%f\r\n",args[0]);
 }
+
+void rotate_test(int arg_num,char **s,float *args){
+  if(arg_num!=0x0000){
+    uprintf("error arg_num!\r\n");
+    return ;
+  }
+  Rotate_Test();
+}
+void get_start_position(int arg_num,char **s,float *args){
+  if(arg_num!=0x0000){
+    uprintf("error arg_num!\r\n");
+    return ;
+  }
+  Get_Start_Position();
+}
+

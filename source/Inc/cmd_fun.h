@@ -11,5 +11,6 @@ void read_mag(int arg_num,char **s,float *args);
 void set_mode(int arg_num,char **s,float * args);
 void set_motor_duty(int arg_num,char **s,float * args);
 void set_mode_s(int arg_num,char **s,float *args);
-
+void rotate_test(int arg_num,char **s,float *args);
+void get_start_position(int arg_num,char **s,float *args);
 #endif

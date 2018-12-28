@@ -62,7 +62,13 @@ extern void _Error_Handler(char *, int);
 void MX_ADC_Init(void);
 
 /* USER CODE BEGIN Prototypes */
-
+void print_adc();
+extern uint16_t Adc_Value[16];
+extern uint16_t Adc_Value_Copy[4];
+extern int16_t Adc_Sub[3];
+extern int16_t Adc_Sub_Last[3];
+void Get_ADC_Value();
+void Get_ADC_Sub_Value();
 /* USER CODE END Prototypes */
 
 #ifdef __cplusplus

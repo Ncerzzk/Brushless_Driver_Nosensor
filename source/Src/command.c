@@ -21,8 +21,7 @@ static void test(int arg_num,char **string_prams,float * arg);
 void command_init(void){
   add_cmd("test",test);  
   add_cmd("set_val",set_val);
-  add_cmd("get_hall",get_hall_state);
-  
+
   add_cmd("set_fd",set_fd6288);
 
   add_cmd("write",write_prams);
@@ -34,6 +33,9 @@ void command_init(void){
   add_cmd("set_mode",set_mode);
   add_cmd("set_duty",set_motor_duty);
   add_cmd("set_mode_s",set_mode_s);
+  
+  add_cmd("rotate_test",rotate_test);
+  add_cmd("get_start_position",get_start_position);
 }
 
 

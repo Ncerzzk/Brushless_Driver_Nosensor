@@ -43,7 +43,7 @@
 #include "gpio.h"
 
 /* USER CODE BEGIN 0 */
-
+#include "usart.h"
 /* USER CODE END 0 */
 
 COMP_HandleTypeDef hcomp1;
@@ -118,9 +118,19 @@ void HAL_COMP_MspDeInit(COMP_HandleTypeDef* compHandle)
 } 
 
 /* USER CODE BEGIN 1 */
+void Set_COMP_AM(){
+  hcomp1.Init.InvertingInput = COMP_INVERTINGINPUT_IO1;
+  
+  if (HAL_COMP_Init(&hcomp1) != HAL_OK)
+  {
+    _Error_Handler(__FILE__, __LINE__);
+  }
+}
 void HAL_COMP_TriggerCallback(COMP_HandleTypeDef *hcomp){
   
 }
+
+
 /* USER CODE END 1 */
 
 /**

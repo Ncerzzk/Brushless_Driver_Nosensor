@@ -1,82 +1,65 @@
 #include "board.h"
 #include "math.h"
+#include "usart.h"
+#include "adc.h"
+#include "as5047.h"
 
 #define LOW_CLOSE       IO_Low
 #define LOW_OPEN        (IO_State)!LOW_CLOSE
 
-Phase_State AB={A,B};
-Phase_State AC={A,C};
-Phase_State BC={B,C};
-Phase_State BA={B,A};
-Phase_State CA={C,A};
-Phase_State CB={C,B};
+typedef enum{
+  FORWARD=0x01,
+  BACKWARD=-0x01
+}MAG_Direction;
+
+Phase_State AB={A,B,0};
+Phase_State AC={A,C,1};
+Phase_State BC={B,C,2};
+Phase_State BA={B,A,3};
+Phase_State CA={C,A,4};
+Phase_State CB={C,B,5};
 
 Mode Board_Mode=TEST;
-Phase_State Now_Phase={A,B};
-uint8_t phase_loop_cnt=0;
-char  Phase_String[3]={'A','B','C'};
+MAG_Direction Direction=FORWARD;
 
-Phase_State * Phase_Table[7]={0};  // 第一个元素是空，因为霍尔没有000的状态。下标是霍尔状态。
-Phase_State * Phase_Table_Reverse[7]={0}; // 反向换向表
-Phase_State ** Phase_Table_Using=0; //当前使用的换向表
+int Now_Phase_Index=0;
 
-uint8_t Phase_Test_Table[6]={5,1,3,2,6,4};//{2,6,4,5,1,3}; // 测试换向表时记录的霍尔状态
-//{5,4,6,2,3,1} //反转时的霍尔状态
-//{&AB,&CB,&CA,&BA,&BC,&AC};
-
-//将其与正转时候的霍尔状态统一，方便程序里写
-//{2,6,4,5,1,3}
-//{&BA,&CA,&CB,&AB,&AC,&BC}
-
-Phase_State * const Phase_Const[6]={&AB,&AC,&BC,&BA,&CA,&CB};    
-Phase_State * const Phase_Const_Reverse[6]={&BA,&CA,&CB,&AB,&AC,&BC};
+//这两个，选择一个使用，具体使用哪一个，与ABC三条线的接法有关
+//当对Phase_Const中，下标从0-5转一圈，如果位置增大，那么就使用Phase_Const
+//否则就应该使用Phase_Const_Reverse
+Phase_State * Phase_Const[6]={&AB,&AC,&BC,&BA,&CA,&CB};      
+Phase_State * Phase_Const_Reverse[6]={&CA,&BA,&BC,&AC,&AB,&CB};  
+Phase_State ** Phase_Table_Using=Phase_Const_Reverse; //当前使用的换向表
 
 int Test_Table_Cnt=0;
 
-float Motor_Duty=30;       //电机占空比
+float Motor_Duty=TEST_TABLE_SPEED;       //电机占空比
 
-int16_t Start_Position=317;
+uint16_t Start_Position=5200;       //未修正的起点位置。修正方式为Start_Position_Raw +/-  0.5*MIN_ANGLE
+
+uint16_t Mag_Position=0;
 int Phase_Change_Cnt=0;//换向计数，仅用于磁编码器的无刷电机
 
 int Phase_Open_Cnt=0;// 相开启时间计数，防止某一相导通太长时间导致电流过大
                      // 1ms 增加一次，在systick中断中增加
-uint8_t Hall_Position=0;
 
 void Set_Motor_Duty(float duty){ //设置电机占空比
   if(duty<0){
-    Phase_Table_Using=Phase_Table_Reverse;
+    Direction=FORWARD;
   }else{
-    Phase_Table_Using=Phase_Table;
+    Direction=BACKWARD;
   }
+
   Motor_Duty=fabs(duty);
 }
 
-void Phase_Table_Init(){
-  
-  uint8_t hall_state=0;
-  for(int i=0;i<6;++i){
-    hall_state=Phase_Test_Table[i];
-    Phase_Table[hall_state]=Phase_Const[i];
-    Phase_Table_Reverse[hall_state]=Phase_Const_Reverse[i];
-  }
-  Phase_Table_Using=Phase_Table;
-  
-  /*
-  //逆时针换相表
-  Phase_Table[2]=&AB;
-  Phase_Table[6]=&AC;
-  Phase_Table[4]=&BC;
-  Phase_Table[5]=&BA;
-  Phase_Table[1]=&CA;
-  Phase_Table[3]=&CB;
-  */
-}
-
-void Phase_Change(Phase_State target,float speed){
+void Phase_Change(Phase_State *target,float speed){
   Close_Phases();
   Phase_Open_Cnt=0;
-  Set_Phase_Low_State(target.Low,LOW_OPEN);
-  Set_Phase_High_Speed(target.High,speed);     //开启目标高低桥  
+  Set_Phase_Low_State(target->Low,LOW_OPEN);
+  Set_Phase_High_Speed(target->High,speed);     //开启目标高低桥  
+  //Mointor_Change(target);
+  Now_Phase_Index=target->index;
 }
 
 void Set_Phase_Low_State(Phase phase,IO_State state){
@@ -111,51 +94,92 @@ void Set_Phase_High_Speed(Phase phase,float speed){
 }
 
 void Close_Phases(){
-  Set_Phase_Low_State(A,0);
-  Set_Phase_Low_State(B,0);
-  Set_Phase_Low_State(C,0);
+  Set_Phase_Low_State(A,IO_Low);
+  Set_Phase_Low_State(B,IO_Low);
+  Set_Phase_Low_State(C,IO_Low);
   Set_Phase_High_Speed(A,0);
   Set_Phase_High_Speed(B,0);
   Set_Phase_High_Speed(C,0);
   
   //uprintf("ok,close all phases\r\n");
 }
+       
 
-uint16_t Read_Mag(){
-  /*
-  uint8_t data[2];
-  uint16_t position;
-  HAL_GPIO_WritePin(CSN_GPIO_Port,CSN_Pin,0);
-  HAL_SPI_Receive(&hspi2,data,2,10);
-  HAL_GPIO_WritePin(CSN_GPIO_Port,CSN_Pin,1);
-  position=(uint16_t)(data[0])<<8|data[1];
-  position>>=6;
-  //uprintf("data = %x %x \r\n",data[0],data[1]);
-  //uprintf("position=%d\r\n",position);
-  return position;
-*/
-  return 0;
+
+
+void Set_To_CB_Positon(){  
+  //将转子定位CB位置，为什么是CB?因为他是换向表最后一个位置，如果换向表不同
+  //则要定位到其他位置（也是换向表的最后一个）
+  for(int i=0;i<=3;++i){
+    Phase_Change(Phase_Const[5],TEST_TABLE_SPEED);
+    HAL_Delay(5);
+    Close_Phases();
+  }
 }
 
+void Get_Start_Position(){
+  Set_To_CB_Positon();
+  HAL_Delay(1000);
+  uprintf("start_position=%d\r\n",Get_Position());
+}
+void Rotate_Test(){
+  //测试板子，以选择正确的换向表
+  //换向表错误的话，板子会来回振动，无法正常运转
+  uint16_t last_position=0;
+  uint16_t position=0;
+  int larger_cnt=0;
 
-void Set_To_Statble_Positon(){  //将转子定位到固定的位置
-  int i=0;
-  uint8_t position,last_position;
-  int position_same_cnt=0;         //本次位置与上次位置相同的情况 计数值
-  for(i=0;i<10;++i){
-    Phase_Change(CB,TEST_TABLE_SPEED); //将转子转到CB处，这样就从AB开始换相
-    HAL_Delay(10);
-    Close_Phases();
-    
-    position=Get_Hall_Position();
-    if(position==last_position){
-      position_same_cnt++;
-    }
-    last_position=position;
-    if(position_same_cnt>=3){
-      uprintf("already in stable position!i=%d the same cnt=%d\r\n",i,position_same_cnt);
-      break;
+  Set_To_CB_Positon();
+  
+  HAL_Delay(1000);
+  last_position=Get_Position();
+  for(int j=0;j<3;++j){
+    for(int i=0;i<6;++i){
+      Phase_Change(Phase_Const[i],TEST_TABLE_SPEED);
+      HAL_Delay(5);
+      Close_Phases();
+      position=Get_Position();
+      if(position-last_position>0){
+        larger_cnt++;
+      }else{
+        larger_cnt--;
+      }
+      last_position=position;
     }
   }
   
+  if(larger_cnt>0){
+    Phase_Table_Using=Phase_Const;
+  }else{
+    Phase_Table_Using=Phase_Const_Reverse;
+  }
+  
+  uprintf("larger_cnt:%d\r\n",larger_cnt);
+}
+
+void Mag_Brushless_Mointor(uint16_t mag_position){
+  uint32_t position=(uint32_t)mag_position;
+  
+  int temp=0;
+  if(position<Start_Position){
+    position+=MAG_ENCODER_LINES;
+  }
+  temp=(int)((float)(position-(Start_Position-Direction*HALF_MIN_ANGLE))/MIN_ANGLE)+Direction;
+  // 假设电机运转到换向点，实际上有两个方向，往前一格，和往后一格
+  // 比如运行顺序为 AB AC BC
+  // 假设电机运行到AC，此时它可以往AB，也可以往BC，两种选择对应正转和反转
+  // 如果不加一个Direction呢？那么电机会往起始点(start_position)收敛，之后再也不动，画图易证
+  if(temp<0){
+    temp=5;
+  }
+  temp%=6;
+
+  if(Board_Mode!=NORMAL){
+    return ;
+  }
+  
+  if(temp!=Phase_Change_Cnt){
+    Phase_Change_Cnt=temp;   //判断是否到达下一相，如果是，换相
+    Phase_Change(Phase_Table_Using[Phase_Change_Cnt],Motor_Duty);
+  }
 }
