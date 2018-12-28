@@ -6,4 +6,5 @@
 !*.PrjPcb
 !*.SchDoc
 !*.md
+!*.c
 *.*
