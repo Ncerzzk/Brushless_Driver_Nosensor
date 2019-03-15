@@ -20,7 +20,7 @@ Phase_State CA={C,A,4};
 Phase_State CB={C,B,5};
 
 Mode Board_Mode=TEST;
-MAG_Direction Direction=FORWARD;
+MAG_Direction Direction=BACKWARD;
 
 int Now_Phase_Index=0;
 
@@ -29,13 +29,13 @@ int Now_Phase_Index=0;
 //否则就应该使用Phase_Const_Reverse
 Phase_State * Phase_Const[6]={&AB,&AC,&BC,&BA,&CA,&CB};      
 Phase_State * Phase_Const_Reverse[6]={&CA,&BA,&BC,&AC,&AB,&CB};  
-Phase_State ** Phase_Table_Using=Phase_Const_Reverse; //当前使用的换向表
+Phase_State ** Phase_Table_Using=Phase_Const; //当前使用的换向表
 
 int Test_Table_Cnt=0;
 
 float Motor_Duty=TEST_TABLE_SPEED;       //电机占空比
 
-uint16_t Start_Position=5200;       //未修正的起点位置。修正方式为Start_Position_Raw +/-  0.5*MIN_ANGLE
+uint16_t Start_Position=9713;       //未修正的起点位置。修正方式为Start_Position_Raw +/-  0.5*MIN_ANGLE
 
 uint16_t Mag_Position=0;
 int Phase_Change_Cnt=0;//换向计数，仅用于磁编码器的无刷电机
@@ -110,10 +110,11 @@ void Close_Phases(){
 void Set_To_CB_Positon(){  
   //将转子定位CB位置，为什么是CB?因为他是换向表最后一个位置，如果换向表不同
   //则要定位到其他位置（也是换向表的最后一个）
-  for(int i=0;i<=3;++i){
+  for(int i=0;i<=10;++i){
     Phase_Change(Phase_Const[5],TEST_TABLE_SPEED);
     HAL_Delay(5);
     Close_Phases();
+    HAL_Delay(5);
   }
 }
 
@@ -158,22 +159,28 @@ void Rotate_Test(){
 }
 
 void Mag_Brushless_Mointor(uint16_t mag_position){
+  uint32_t fixed_start_position=0;
   uint32_t position=(uint32_t)mag_position;
   
   int temp=0;
-  if(position<Start_Position){
+  fixed_start_position=Start_Position+Direction*HALF_MIN_ANGLE;
+  if(position<fixed_start_position){
     position+=MAG_ENCODER_LINES;
   }
-  temp=(int)((float)(position-(Start_Position-Direction*HALF_MIN_ANGLE))/MIN_ANGLE)+Direction;
+  if(Direction==FORWARD){
+    temp=(int)((float)(position-(fixed_start_position))/MIN_ANGLE)+1;
+  }else{
+    temp=(int)((float)(position-(fixed_start_position))/MIN_ANGLE)-3;
+  }
   // 假设电机运转到换向点，实际上有两个方向，往前一格，和往后一格
   // 比如运行顺序为 AB AC BC
   // 假设电机运行到AC，此时它可以往AB，也可以往BC，两种选择对应正转和反转
   // 如果不加一个Direction呢？那么电机会往起始点(start_position)收敛，之后再也不动，画图易证
   if(temp<0){
-    temp=5;
+    temp+=6;
   }
   temp%=6;
-
+  
   if(Board_Mode!=NORMAL){
     return ;
   }
@@ -181,5 +188,6 @@ void Mag_Brushless_Mointor(uint16_t mag_position){
   if(temp!=Phase_Change_Cnt){
     Phase_Change_Cnt=temp;   //判断是否到达下一相，如果是，换相
     Phase_Change(Phase_Table_Using[Phase_Change_Cnt],Motor_Duty);
+    uprintf("%d\r\n",Phase_Change_Cnt);
   }
 }

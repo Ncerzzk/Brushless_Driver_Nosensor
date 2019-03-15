@@ -210,7 +210,7 @@ void HAL_SYSTICK_Callback(void){
    if(Phase_Open_Cnt>30){
       Close_Phases();
       Phase_Open_Cnt=0;
-      uprintf("close phases!\r\n");
+      //uprintf("close phases!\r\n");
    }
 
 }

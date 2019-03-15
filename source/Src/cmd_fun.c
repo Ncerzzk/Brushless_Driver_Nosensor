@@ -15,6 +15,7 @@ typedef struct{
 
 
 extern uint8_t First_Time_Check;
+extern uint16_t Mag_Position;
 Var_Edit_Struct Var_List[10]={
   {"first",&First_Time_Check}
 };
@@ -184,7 +185,7 @@ void read_mag(int arg_num,char **s,float *args){
     uprintf("error arg_num!\r\n");
     return ;
   }
-  
+  uprintf("position=%d\r\n",Mag_Position);
   
 }
 
